@@ -1,0 +1,42 @@
+version: '2'
+
+services:
+  ssh_vol_edu_be:
+   build:
+      context: ssh_vol_edu_be/
+   privileged: true
+   volumes:
+     - ssh_volumes:/mounts/edu-be
+   environment:
+     USER: unitb
+     SERVER: 149.221.203.81
+     REMOTE_FOLDER: "/opt/escenic"
+   networks:
+     - ssh_net
+
+  ssh_vol_edu_fe:
+   build:
+      context: ssh_vol_edu_fe/
+   privileged: true
+   volumes:
+     - ssh_volumes:/mounts/edu-fe
+   environment:
+     USER: unitb
+     SERVER: 149.221.203.80
+     REMOTE_FOLDER: "/opt/escenic"
+   networks:
+     - ssh_net
+
+  centos:
+    image: centos:7
+    volumes-from:
+     - ssh_vol_edu_fe
+    networks:
+      - ssh_net
+
+volumes:
+  ssh_volumes: {}
+
+networks:
+  ssh_net:
+   driver: bridge
